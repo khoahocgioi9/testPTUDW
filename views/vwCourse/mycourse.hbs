@@ -1,0 +1,45 @@
+<div class="container">
+
+
+    <h2>{{CourseName}}</h2>
+
+
+
+    <div class="card-body">
+        {{#if this.isEmpty}}
+            <h4 class="card-title">Sorry</h4>
+            <p class="card-text">You has not enrolled any courses yet!!!</p>
+        {{else}}
+            <div class="row">
+                {{#each this.items}}
+                    <div class="col-sm-4 mb-3" style="margin: 20px 0;">
+                        <div class="card ">
+                            <img src=""
+                                 class="card-img-top" alt="{{course.COURSENAME}}" title="{{course.COURSENAME}}"
+                                 style="width: 100%; height: 40%">
+                            <div class="card-body">
+                                <h5 class="card-title">{{course.COURSENAME}}</h5>
+                                <h6 class="card-title">Instructor: {{instructor.FULLNAME}}
+
+                                </h6>
+                                {{#if isDiscount}}
+                                    <h6 class="card-title"><del>{{format_number course.PRICE}} VND</del></h6>
+                                    <h5 class="card-title text-danger">{{format_number realPrice}} VND</h5>
+                                {{else}}
+                                    <h5 class="card-title text-danger">{{format_number realPrice}} VND</h5>
+                                {{/if}}
+                                <p class="card-text">{{course.SHORTDES}}</p>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <a href="/category/course/detail/{{course.ID_COURSE}}" class="btn btn-outline-primary">
+                                    <i class="fa fa-list-ol" aria-hidden="true"></i>
+                                    Detail
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        {{/if}}
+    </div>
+</div>

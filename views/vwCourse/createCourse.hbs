@@ -1,0 +1,220 @@
+{{#section 'css'}}
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/css/fileinput.min.css" />
+
+  <!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->
+{{/section}}
+
+{{#section 'js'}}
+  <script src="https://cdn.tiny.cloud/1/ezd73nxbzc7bu6e86g2l82jbbffke0mwevwrnyvc5q8h89j6/tinymce/6/tinymce.min.js"
+    referrerpolicy="origin"></script>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/buffer.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/filetype.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/piexif.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/fileinput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/themes/fa4/theme.min.js"></script>
+
+  <script>
+
+    tinymce.init({
+      selector: '#txtFullDes',
+      menubar: false,
+      plugins: 'paste image link autolink lists table media',
+      toolbar: [
+        'undo redo | bold italic underline strikethrough | numlist bullist | alignleft aligncenter alignright | forecolor backcolor | table link image media',
+      ],
+    });
+    tinymce.init({
+      selector: '#txtShortDes',
+      menubar: false,
+      plugins: 'paste image link autolink lists table media',
+      toolbar: [
+        'undo redo | bold italic underline strikethrough | numlist bullist | alignleft aligncenter alignright | forecolor backcolor | table link image media',
+      ],
+    });
+  </script>
+
+  <script>
+    $('#fuMain').fileinput({
+      dropZoneEnabled: false,
+      showUpload: false,
+      maxFileCount: 1,
+      theme: 'fa4',
+      allowedFileExtensions: ['png'],
+    });
+    $('#fuThumbnail').fileinput({
+      dropZoneEnabled: false,
+      showUpload: false,
+      maxFileCount: 1,
+      theme: 'fa4',
+      allowedFileExtensions: ['png'],
+    });
+  </script>
+
+
+  <script>
+    $(document).ready(function () {
+      var count = 0;
+      var wrapper = $("#Content");
+      var addChap = $("#addChapterbtn");
+
+
+   
+      {{!-- $("#save").click(function (e) {
+        e.preventDefault();
+
+        var lescount = $(".lesson").length;
+        var inputArr = $(".fuLesson");
+        var lessonFilecount = 0;
+        for (let i = 0; i < inputArr.length; ++i) {
+
+          lessonFilecount = lessonFilecount + inputArr[i].files.length;
+
+        }
+        if (coulessonFilecountnt == lescount) {
+          $("#target").submit();
+        }
+        alert("Every Lesson need a video");
+      })
+ --}}
+
+
+    $(addChap).click(function (e) {
+      e.preventDefault();
+
+      let html = `<div id="Chapter" data-count="` + count + `"><div class="row d-flex align-items-center mt-3" ><div class="form-group col-10"><label for="txtCourseName">Chapter name</label><input name="chapter[`+ count + `][name]" type="text" class="form-control" id="txtCourseName" autofocus placeholder="iPhone"></div><div class="col-2 d-flex flex-column"><a class="btn btn-danger py-1" id="removeChapter" onClick="return this.parentNode.parentNode.parentNode.remove()">Remove</a><a class="btn btn-primary py-1 mt-1" id="addLessonbtn">Add</a></div></div><div id="Lesson" class="pb-3 row d-flex justify-content-center"></div></div>`
+      $(wrapper).append(html); //add input box
+      count++;
+    });
+
+    $(wrapper).on("click", "#addLessonbtn", function (e) {
+      e.preventDefault();
+      let t = $(this).parent('div').parent('div').parent('div');
+      let chapCount = t.data('count');
+
+      let lesContainer = t.children('div#Lesson');
+      let html = `<div class="lesson row col-11 d-flex align-items-center pt-2 pb-3 mt-2" style="background-color: #bec4d6; border-radius: 15px;""><div class="col-10"><div class="form-group"><label for="txtLessonName">Lesson name</label><input name="chapter[` + chapCount + `][lessonName][]" type="text" class="form-control" id="txtLessonName" autofocus placeholder="Lesson"></div><div class="form-group"><label for="fuLesson">Video:</label><br/><input type="file" id="fuLesson" name="fuLesson" class="fuLesson"></div></div><div class="col-2 d-flex flex-column"><a class="btn btn-danger" id="removeLesson" onClick="return this.parentNode.parentNode.remove()">Remove</a></div></div>` 
+      $(lesContainer).append(html);
+    });
+
+
+
+    $("#txtField").on("change", () => {
+      let idx = $("#txtField").prop('selectedIndex');
+
+      $("#txtCat").empty();
+
+      {{#each lcField_Categories}}
+
+      {{#each categories}}
+
+      if ({{@../index}} == idx) {           
+        $("#txtCat").append(`<option value={{this.ID_CATE}}>{{this.CATENAME}}</option>`);
+      }
+
+
+      {{/each}}
+
+      {{/each}}
+
+
+
+     });
+
+   });
+
+  </script>
+
+
+
+
+{{/section}}
+
+<form id="target" method="post" enctype="multipart/form-data">
+  <div class="card">
+    <h4 class="card-header">
+      Edit Course
+    </h4>
+    <div class="card-body">
+      <div class="form-group">
+        <label for="txtCourseName">Course name</label>
+        <input name="CourseName" type="text" class="form-control" id="txtCourseName" autofocus placeholder="iPhone">
+      </div>
+
+      <div class="row">
+        <div class="form-group col-6">
+          <label for="txtPrice">Price</label>
+          <input name="Price" type="text" class="form-control" id="txtPrice" autofocus placeholder="iPhone">
+        </div>
+
+        <div class="form-group col-3">
+          <label for="txtField">Field</label>
+          <select class="form-control" id="txtField" name="Field">
+            {{#each lcField_Categories}}
+              <option value={{field.ID_FIELD}}>{{field.FIELDNAME}}</option>
+
+            {{/each}}
+          </select>
+        </div>
+
+        <div class="form-group col-3">
+          <label for="txtCat">Catergories</label>
+          <select class="form-control" id="txtCat" name="Cat">
+
+            {{#each lcField_Categories.[0].categories}}
+              <option value={{ID_CATE}}>{{CATENAME}}</option>
+            {{/each}}
+
+
+          </select>
+        </div>
+
+      </div>
+
+      <div class="row form-group d-flex justify-content-between">
+        <div class="form-group col-5">
+          <label for="fuMain">Course banner</label>
+          <input type="file" id="fuMain" name="fuMain">
+        </div>
+        <div class="form-group col-5">
+          <label for="fuThumbnail">Course thumbnail</label>
+          <input type="file" id="fuThumbnail" name="fuThumbnail">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="txtShortDes">Short Description</label>
+        <textarea id="txtShortDes" name="ShortDes">Hello, TinyMCE!</textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="txtFullDes">Description</label>
+        <textarea id="txtFullDes" name="FullDes">Hello, TinyMCE!</textarea>
+      </div>
+
+
+      <h4>Content</h4>
+      <div id="Content">
+
+      </div>
+
+      <div style="width: 100%" class="d-flex justify-content-center">
+      <a class="btn btn-primary col-3" id="addChapterbtn">
+        Add
+      </a>
+
+      </div>
+
+    </div>
+
+    <div class="card-footer">
+      <button type="submit" class="btn btn-primary" id="save">
+        <i class="fa fa-check" aria-hidden="true"></i>
+        Save
+      </button>
+    </div>
+  </div>
+</form>

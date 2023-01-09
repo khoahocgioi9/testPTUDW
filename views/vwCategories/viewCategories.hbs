@@ -1,0 +1,65 @@
+<div class="card">
+  <h4 class="card-header">
+    Products
+  </h4>
+{{#if this.empty}}
+<div class="card-body">
+    <h5 class="card-title">
+      No products found
+    </h5>
+  </div>
+   {{else}}
+   
+<div class="d-flex flex-row w-75 mx-auto">
+  {{#each this.course}}
+    <a class="btn d-flex align-items-center justify-content-between" href="https://www.example.com/courses/course1">
+      <div>
+        <img src="1.png">
+      </div>
+      <div class="main d-flex flex-column text-left pl-4">
+        <div class="tittle"> {{COURSENAME}} <h3></h3></div>
+        <div class="description"{{DESCRIPTIONS}}</div>
+        <div class = "author">
+          {{#if this.ID_USER === this.ID_USER}}
+            {{#each this.user}}
+              {{USERNAME}}
+            {{/each}}
+          {{/if}}
+        </div>
+        <div class="rating d-flex align-items-center">
+          {{RATENUM}}
+          {{#if RATENUM}}
+            {{#each (range RATENUM)}}
+              <i class="fa fa-star"></i>
+            {{/each}}
+            <span class="total view">
+              ({{VIEWED}})
+            </span>
+        </div>
+      </div>
+      <div class="price d-flex flex-column align-items-center justify-content-center">
+        <div class="price"><h3>{{format_number PRICE}}</h3></div>
+        <div class="discount"><h4>{{format_number DISCOUNT}}</h4></div>
+      </div>
+    </a>
+  </div>
+
+  <div id="container" style="display: flex; justify-content: center;" >
+    <div class="pagination mt-3">
+      <a name="" id="" class="btn btn-outline-dark mr-2" href="#" role="button"><i class="fa fa-arrow-left"></i>Prev</a>
+      <a name="" id="" class="btn btn-outline-dark mr-2" href="#" role="button">
+        {{#each this.pageNumbers}}
+          {{#if isCurrent}}
+          <li class="page-item active" aria-current="page">
+            <span class="page-link">{{value}}</span>
+          </li>
+          {{else}}
+          <li class="page-item">
+            <a class="page-link" href="?page={{value}}">{{value}}</a>
+          </li>
+          {{/if}}
+        {{/each}}
+      </a>
+      <a name="" id="" class="btn btn-outline-dark mr-2" href="#" role="button"> Next <i class="fa fa-arrow-right"></i></a>
+    </div>
+  </div>

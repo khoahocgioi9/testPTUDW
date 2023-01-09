@@ -1,0 +1,211 @@
+<div class="card" style="width: 100%"   >
+    <h4 class="card-header">
+        {{this.course.COURSENAME}}
+    </h4>
+    <div class="card-body" >
+        <div class="row" >
+            <div class="col-8" style="background-color:black" ><span style=" margin-top: 24px;">
+
+                <div style="margin-top: 20px;"><img src="/public/imgs/course/{{this.course.ID_COURSE}}/main.jpg"
+                           alt="{{this.course.COURSENAME}}" title="{{this.course.COURSENAME}}"></div>
+                <div style="margin-right: 20px;">
+                    <p class="card-text" id="txt"  style="color: white"    ><span style="font-size: 20px"> {{this.course.SHORTDES}}</span></p></div>
+                <div style="margin-right: 20px;">
+                    <p class="card-text" id="txt" style="color:#ffd141"> {{rate}}/5<i class="fa fa-star" aria-hidden="true"></i>
+                        <span class="text" style="color:plum">  ({{format_number num}}) ratings   </span>
+                        <span class="text" style="color: white">{{format_number this.course.STUNUM}} students </span>
+                    </p>
+                    <p class="card-text" id="txt"style="color: white">Created date: {{this.course.CREATEDATE}}</p>
+                    <p class="card-text" id="txt"style="color: white">Lastest update: {{this.course.LASTUPDATE}}</p></div>
+
+            </span>
+            </div>
+
+
+
+            <div class="col-2" style="background-color: antiquewhite "  >
+                {{#if isDiscount}}
+                <p class="card-text" ><span class="text"style="font-size: 30px"><del>{{format_number this.course.PRICE}} VND</del></span></p>
+                <p class="card-text" style="font-size: 25px">Price: <span class="text-danger" style="font-size: 25px">{{format_number realPrice}} VND</span></p>
+                {{else}}
+                    <p class="card-text"><span class="text" style="font-size: 25px">{{format_number this.course.PRICE}} VND</span></p>
+                {{/if}}
+                <p>
+                <a class="btn btn-primary" href="#" role="button" style="font-size: 25px">Add to cart  <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                </p>
+                <p>
+                    <a class="btn btn-primary" href="#" role="button" style="font-size: 25px">Buy now</a>
+                </p>
+
+            </div>
+
+        </div>
+        <div class="row" style="margin-top: 20px" style="border-top-style:solid">
+            <div class="col-5">
+                <h5 >What you'll learn</h5>
+                <div class="row" >
+
+
+
+                    <p class="card-text">{{{this.course.DESCRIPTIONS}}}</p>
+
+
+
+                </div>
+                
+                <h5 style="margin-top: 20px;">Instructor</h5>
+                <div class="row" style="margin-top: 20px">
+
+                    <p>
+                    <div >
+                        <div><img src="/public/imgs/course/{{this.course.ID_COURSE}}/main_thumbs.jpg" alt="teacher"
+                                  title="teacher"></div>
+
+                        <div style="margin-left: 20px;">
+                            <p class="card-text">Instructor: {{instructor.USERNAME}}</p>
+                            <p class="card-text">Bio:{{instructor.PROFILE}} </p>
+                        </div>
+
+                    </div>
+                    </p>
+
+
+
+                </div>
+
+            </div>
+
+            <div class="col-5">
+                <h5 style="margin-bottom: 20px">Course Content</h5>
+                <div class="d-flex justify-content-between">
+                    <p>{{this.course.VIEWED}} sections - {{this.course.LENGTHS}} total length</p>
+                    <a  href="#" ><span style="color: plum"  >Expand all sections</span></a>
+                </div>
+
+                {{#each chapterdata as |chapterdata|}}
+                    {{chapterdata}}
+
+                <div id="accordion" >
+
+                    <div class="card">
+                        <div class="card-header" id="heading{{data.ID_CHAPTER}}">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link" data-toggle="collapse" data-target="#collapse{{data.ID_CHAPTER}}" aria-expanded="true" aria-controls="collapse{{data.IDCHAPTER}}" style="font-size: 15px">
+                                    {{data.CHAPTERNAME}}
+                                </button>
+                            </h5>
+                        </div>
+
+
+
+                        <div id="collapse{{data.ID_CHAPTER}}" class="collapse show" aria-labelledby="heading{{data.IDCHAPTER}}" data-parent="#accordion">
+                            <div class="card-body">
+
+
+                                <div class="list-group" >
+
+                                    {{#each ../lessondata as |lessondata|}}
+                                        {{lessondata}}
+                                        <a href="/category/course/detail/{{this.course.ID_COURSE}}/1" ><i class="fa fa-play" aria-hidden="true"></i> {{les.LESSONNAME}}</a>
+                                    {{/each}}
+
+
+
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                </div>
+                {{/each }}
+
+
+
+
+
+
+
+            </div>
+        </div>
+
+
+
+
+        <h4>Student also bought</h4>
+        <div class="row" style="margin-top: 20px">
+
+        <div class="d-flex justify-content-between">
+            {{#each top5}}
+
+                <div>
+
+                    <a href="/category/course/detail/{{top555.ID_COURSE}}" ><img src="/public/imgs/course/{{top555.ID_COURSE}}/main_thumbs.jpg" alt="{{top555.COURSENAME}}" title="{{top555.COURSENAME}}"></a>
+
+                </div>
+               <div></div>
+
+                <div >
+                    <p>
+                        <a style="color: black" href="/category/course/detail/{{top555.ID_COURSE}}">{{top555.COURSENAME}}</a>
+                    <p class="card-text" id="txt" style="color:#ffd141"> {{top555.rate}}/5<i class="fa fa-star" aria-hidden="true"></i>
+                        <span class="text" style="color:plum">  ({{format_number top555.RATENUM}})   </span>
+                    </p>
+
+
+
+                    </p>
+                    <p class="card-text"><span class="text" >{{format_number top555.PRICE}} VND</span></p>
+
+
+
+            </div>
+
+            {{/each}}</div>
+        </div>
+
+
+
+    <h4>Course ratings</h4>
+        <div class="row" style="margin-top: 20px">
+
+            <div class="d-flex justify-content-between">
+                {{#each feedbackdata}}
+
+                    <div>
+
+                        <a href="/category/course/detail/{{user.ID_USER}}" ><img src="/public/imgs/course/{{feedback.ID_COURSE}}/main_thumbs.jpg" alt="{{user.FULLNAME}}" title="{{user.FULLNAME}}"></a>
+
+                    </div>
+                    <div></div>
+
+                    <div >
+                        <p>
+                            <p style="color: black" href="#">{{user.FULLNAME}}</p>
+                        <p class="card-text" id="txt" style="color:#ffd141"> {{feedback.RATE}}/5<i class="fa fa-star" aria-hidden="true"></i>
+
+                        </p>
+
+
+
+                        </p>
+                        <p class="card-text"><span class="text" >{{feedback.FEEDBACK}} </span></p>
+
+
+
+                    </div>
+
+                {{/each}}</div>
+        </div>
+
+
+</div>
+</div>
+
+
+
+

@@ -1,0 +1,351 @@
+{{#section 'css'}}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/css/fileinput.min.css" />
+
+<!--  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script> -->{{/section}}
+
+{{#section 'js'}}
+  <script src="https://cdn.tiny.cloud/1/ezd73nxbzc7bu6e86g2l82jbbffke0mwevwrnyvc5q8h89j6/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+  
+    
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/buffer.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/filetype.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/piexif.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/plugins/sortable.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/js/fileinput.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-fileinput/5.5.2/themes/fa4/theme.min.js"></script>
+
+<script>
+
+    tinymce.init({
+      selector: '#txtFullDes',
+      menubar: false,
+      plugins: 'paste image link autolink lists table media',
+      toolbar: [
+        'undo redo | bold italic underline strikethrough | numlist bullist | alignleft aligncenter alignright | forecolor backcolor | table link image media',
+      ],
+    });
+	tinymce.init({
+      selector: '#txtShortDes',
+      menubar: false,
+      plugins: 'paste image link autolink lists table media',
+      toolbar: [
+        'undo redo | bold italic underline strikethrough | numlist bullist | alignleft aligncenter alignright | forecolor backcolor | table link image media',
+      ],
+    });
+  </script>
+
+  <script>
+    $('#fuMain').fileinput({
+      dropZoneEnabled: false,
+      maxFileCount: 1,
+      theme: 'fa4',
+      allowedFileExtensions: ['png'],
+    });
+	  $('#fuThumbnail').fileinput({
+      dropZoneEnabled: false,
+      showUpload: false,
+      maxFileCount: 1,
+      theme: 'fa4',
+      allowedFileExtensions: ['png'],
+    });
+    $('#fuLesson').fileinput({
+      dropZoneEnabled: false,
+      showUpload: false,
+      maxFileCount: 1,
+      theme: 'fa4',
+      allowedFileExtensions: ['png'],
+    });
+  </script>
+  
+  
+  <script>
+    $(document).ready(function() {
+
+    let courseid = {{course.ID_COURSE}};
+
+
+    var count ={{curcounter}};
+    var wrapper = $("#Content");
+    var addChap = $("#addChapterbtn");
+    
+    $("#closeModal").click(function(e){
+      e.preventDefault();
+       $('#fuLesson').fileinput('clear')
+    });
+   
+   $("#saveModal").click(function(e){
+      e.preventDefault();
+      var el = $('#fuLesson');
+      var fd = new FormData();
+      fd.append('fuLesson', el[0].files[0])
+      let val = $("#selectedLesson").val();
+      $("#"+val).html(el[0].files[0].name)
+      $.ajax({
+        url: "/lesson/save?lessonId=" + val,
+        data: fd,
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        cache: false,
+      });
+       $('#fuLesson').fileinput('clear')
+    });
+
+    $(addChap).click(function(e) {
+        e.preventDefault();
+        $.getJSON(`/chapter/create?courseId=` + courseid, function (data) {
+          let html = `<div id="Chapter" data-count="`+count+`" data-id="`+data+`"><input name="chapter[`+ count +`][id]" type="text" class="form-control" id="txtPrice" style="display: none;" value="`+data+`"><div class="row d-flex align-items-center mt-3" ><div class="form-group col-10"><label for="txtCourseName">Chapter name</label><input name="chapter[`+ count +`][name]" type="text" class="form-control" id="txtCourseName" autofocus placeholder="New Chapter name"></div><div class="col-2 d-flex flex-column"><a class="btn btn-danger py-1" id="removeChapter">Remove</a><a class="btn btn-primary py-1 mt-1" id="addLessonbtn">Add</a></div></div><div id="Lesson" class="pb-3 row d-flex justify-content-center"></div></div>`
+          $(wrapper).append(html); //add input box
+          count++;
+        });  		
+     });
+
+  $(wrapper).on("click", "#addLessonbtn", function(e) {
+      e.preventDefault();
+       let t = $(this).parent('div').parent('div').parent('div');
+       let chapCount = t.data('count');
+
+       let chapid = t.data('id');
+      
+      let lesContainer = t.children('div#Lesson');
+        $.getJSON(`/lesson/create?chapId=` + chapid, function (data) {
+          let html = `<div class="row col-11 d-flex align-items-center pt-2 pb-3 mt-2" style="background-color: #bec4d6; border-radius: 15px;" data-id="`+ data +`"><input name="chapter[`+ chapCount +`][lessonId][]" type="text" class="form-control" id="txtPrice" style="display: none;" value="`+ data +`"><div class="col-10"><div class="form-group"><label for="txtLessonName">Lesson name</label><input name="chapter[`+ chapCount +`][lessonName][]" type="text" class="form-control" id="txtLessonName" placeholder="New lesson name"></div><div class="form-group"><p>Video: <span id={{ID_CATE}}></span></p></div></div><div class="col-2 d-flex flex-column"><a class="btn btn-danger" id="removeLesson">Remove</a><a class="btn btn-primary mt-1" data-toggle="modal" data-target="#largeModal" id="changeLessonVid">Change</a></div></div>` ;
+        $(lesContainer).append(html);
+       })
+  });
+  $(wrapper).on("click", "#removeChapter", function(e) {
+    e.preventDefault()
+    let t = $(this).parent('div').parent('div').parent('div');
+    let chapid = t.data("id");
+
+    let lesContainer = t.children('div#Lesson');
+    
+    let children = lesContainer.children();
+    children.each((index, child)=>{
+      let lesid = $(child).data("id");
+      $.getJSON(`/lesson/del?lessonId=` + lesid, function (data) {  
+        $(child).remove();
+      });
+    })
+    $.getJSON(`/chapter/del?chapterId=` + chapid, function (data) {
+      t.remove();
+    });
+     
+  });
+
+  $(wrapper).on("click", "#removeLesson", function(e) {
+    e.preventDefault()
+    let t = $(this).parent('div').parent('div');
+    let lesid = t.data('id');
+    $.getJSON(`/lesson/del?lessonId=` + lesid, function (data) {  
+      $(t).remove();
+    });
+
+  });
+
+
+
+    $("#txtField").on("change", () => {
+        let idx = $("#txtField").prop('selectedIndex');
+
+        $("#txtCat").empty();
+
+        {{#each lcField_Categories}}
+         {{#each categories}}
+            if({{@../index}} == idx) {           
+             $("#txtCat").append(`<option value={{this.ID_CATE}}>{{this.CATENAME}}</option>`);
+            }   
+         {{/each}}
+        {{/each}}
+
+    });
+
+     		
+  $(wrapper).on("click", "#changeLessonVid", function(e) {
+    e.preventDefault();
+    let t = $(this).parent('div').parent('div');
+    let lesid = t.data('id');
+
+    $("#selectedLesson").val(lesid);
+  });
+
+
+    
+});
+</script>
+	
+  
+ 
+  
+{{/section}}
+
+<form method="post" enctype="multipart/form-data">
+  <div class="card">
+    <h4 class="card-header">
+      Edit Course
+    </h4>
+    <div class="card-body">
+		<div class="form-group">
+			<label for="txtCourseName">Course name</label>
+			<input name="CourseName" type="text" class="form-control" id="txtCourseName" autofocus value="{{course.COURSENAME}}">
+		</div>
+
+		<div class="row">
+			<div class="form-group col-6">
+				<label for="txtPrice">Price</label>
+				<input name="Price" type="text" class="form-control" id="txtPrice" autofocus value="{{course.PRICE}}">
+			</div>
+	  
+			<div class="form-group col-3">
+				<label for="txtField">Field</label>
+				<select class="form-control" id="txtField" name="Field">
+						
+
+           {{#each lcField_Categories}}
+              <option value={{field.ID_FIELD}} {{#if_equal ID_FIELD ../curField.ID_FIELD}}selected="selected" {{/if_equal}}>{{field.FIELDNAME}}</option>
+
+            {{/each}}
+				</select>
+			</div>
+		
+			<div class="form-group col-3">
+				<label for="txtCat">Catergories</label>
+				<select class="form-control" id="txtCat" name="Cat">
+			
+					{{#each curCatList}}
+					<option value={{ID_CATE}} {{#if_equal ID_CATE ../course.ID_CATE}}selected="selected" {{/if_equal}}>{{CATENAME}}</option>
+							
+							
+					{{/each}}
+		
+				</select>
+			</div>
+    
+		</div>
+	  
+	    <div class="row form-group d-flex justify-content-between">
+        <div class="form-group col-5">
+          <label for="fuMain">Course banner</label>
+          <input type="file" id="fuMain" name="fuMain">
+        </div>
+        <div class="form-group col-5">
+          <label for="fuThumbnail">Course thumbnail</label>
+          <input type="file" id="fuThumbnail" name="fuThumbnail">
+        </div>
+      </div>
+	  
+		<div class="form-group">
+			<label for="txtShortDes">Short Description</label>
+			<textarea id="txtShortDes" name="ShortDes">{{course.SHORTDES}}</textarea>
+		</div>
+	  
+		<div class="form-group">
+			<label for="txtFullDes">Description</label>
+			<textarea id="txtFullDes" name="FullDes">{{course.DESCRIPTIONS}}</textarea>
+		</div>
+	  
+	  
+		<h4>Lesson content</h4>
+		<div id="Content">
+		 
+			{{#each this.data}}
+			<div id="Chapter" data-count="{{@index}}" data-id="{{chapter.ID_CHAPTER}}">
+				<input name="chapter[{{@index}}][id]" type="text" class="form-control" style="display: none;" value="{{chapter.ID_CHAPTER}}">
+			  <div class="row d-flex align-items-center mt-3" >
+				  <div class="form-group col-10">
+					  <label for="txtCourseName">Chapter name</label>
+					  <input name="chapter[{{@index}}][name]" type="text" class="form-control" id="txtCourseName" autofocus value="{{chapter.CHAPTERNAME}}">
+				  </div>
+				  <div class="col-2 d-flex flex-column">
+            <a class="btn btn-danger py-1" id="removeChapter">  
+              Remove
+            </a>
+            <a class="btn btn-primary py-1 mt-1" id="addLessonbtn">
+					  Add
+				    </a>
+          </div>
+			  </div>
+		  
+			  <div id="Lesson" class="pb-3 row d-flex justify-content-center">
+				
+				{{#each lessons}}
+
+				  <div class="row col-11 d-flex align-items-center pt-2 pb-3 mt-2" style="background-color: #bec4d6; border-radius: 15px;" data-id="{{ID_LESSON}}">
+					  <input name="chapter[{{@../index}}][lessonId][]" type="text" class="form-control" style="display: none;" value="{{ID_LESSON}}">
+		        <div class="col-10">
+						  <div class="form-group">
+                <label for="txtLessonName">Lesson name</label>
+                <input name="chapter[{{@../index}}][lessonName][]" type="text" class="form-control" id="txtLessonName" autofocus value="{{LESSONNAME}}">
+					    </div>
+						  <div class="form-group">
+                <p>Video: <span id={{ID_LESSON}}>{{URL}}</span></p>
+              </div>
+					  </div>
+            <div class="col-2 d-flex flex-column">
+				  	  <a class="btn btn-danger" id="removeLesson">
+						  Remove
+					    </a>
+              <a class="btn btn-primary mt-1" data-toggle="modal" data-target="#largeModal" id="changeLessonVid">Change</a>
+            </div>
+          </div>
+				{{/each}}
+				
+			  </div>
+			
+      </div>
+				
+			{{/each}}
+		 
+		 
+		</div>
+	  
+	  <div style="width: 100%" class="d-flex justify-content-center">
+      <a class="btn btn-primary col-3" id="addChapterbtn">
+        Add
+      </a>
+
+      </div>
+	  
+    </div>
+	
+    <div class="card-footer pb-5 mt-5">
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-check" aria-hidden="true"></i>
+        Save
+      </button>
+      
+      <button type="submit" class="btn btn-danger ml-2" formaction="/course/del?id={{course.ID_COURSE}}">
+        <i class="fa fa-trash" aria-hidden="true"></i>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <div class="modal fade" id="largeModal" tabindex="-1" role="dialog" aria-labelledby="basicModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title" id="myModalLabel">Large Modal</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+			  	<input id="selectedLesson" type="text" class="form-control" style="display: none;" value="">
+          <div class="row d-flex justify-content-center">
+            <div class="form-group col-5">
+              <label for="fuLesson">Video</label>
+              <input type="file" id="fuLesson" name="fuLesson">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal" id="closeModal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" id="saveModal">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</form>
